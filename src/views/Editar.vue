@@ -1,15 +1,12 @@
 <template>
   <div class="edit">
     <h1>Editar</h1>
-    Me llega al nepe : {{ dataToEdit.tarea }}<br />
-    <h2>
-      Cambiare a otro curso, aunque la verdad soy vago y todo me vale una
-      pichula JAJAJA XD
-    </h2>
-    <h3>*se masturba*</h3>
+    }<br />
+    <h2>Tarea {{ dataToEdit.tarea }}</h2>
+    <h3>Editar la tarea {{ dataToEdit.tarea }}:</h3>
     <form @submit.prevent="putTarea(dataToEdit)">
       <input type="text" v-model="dataToEdit.tarea" />
-      <button type="submit">Hacer Webadas</button>
+      <button type="submit">Actualizar</button>
     </form>
   </div>
 </template>

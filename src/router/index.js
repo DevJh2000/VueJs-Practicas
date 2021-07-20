@@ -10,6 +10,11 @@ const routes = [
     component: () => import("../views/Inicio.vue"),
   },
   {
+    path: "/",
+    name: "Agregar",
+    component: () => import("../views/Agregar.vue"),
+  },
+  {
     path: "/editar/:object",
     name: "Editar",
     component: () => import("../views/Editar.vue"),

@@ -19,26 +19,40 @@ export default new Vuex.Store({
         router.push("/");
       }
     },
+    setEliminarTarea(state, payloadDatatoDelete) {
+      return (state.listTareas = state.listTareas.filter((dat) => {
+        return dat.id !== payloadDatatoDelete;
+      }));
+    },
   },
   actions: {
+    //listar tareas
     async getDataTareas({ commit }) {
       const arrTareas = [];
-      const colTareas = db.collection("tareas");
+      const colTareas = db.collection("tareas").orderBy("nombre_Tarea", "asc");
       const lisdata = await colTareas.get().catch((e) => {
         return console.log(e);
       });
       await lisdata.forEach((datO) => {
-        // console.log({ id: datO.id, ...datO.data() });
         return arrTareas.push({ id: datO.id, ...datO.data() });
       });
       commit("setTareas", arrTareas);
     },
+    //Agregar una nueva tarea
+    async postTarea({}, nuevaTarea) {
+      const colTareas = db.collection("tareas");
+      await colTareas.add({ nombre_Tarea: nuevaTarea }).catch((e) => {
+        return console.log(e);
+      });
+      router.push("/");
+      return console.log("Tarea Registrada");
+    },
+    //almacenar estado de la informacion enviada entre formularios
     async DataToEdit({ commit }, dataToEdit) {
       commit("setDataToEdit", dataToEdit);
     },
-
-    async putTarea({ commit }, objTareaUpdate) {
-      console.log(objTareaUpdate.id);
+    //Actualizar un tarea
+    async putTarea({}, objTareaUpdate) {
       const colTareas = db.collection("tareas");
       await colTareas
         .doc(objTareaUpdate.id)
@@ -47,7 +61,19 @@ export default new Vuex.Store({
           return console.log(e);
         });
       router.push("/");
-      return console.log("data enviada");
+      return console.log("Tarea Actualizada");
+    },
+    //Eliminar una tarea
+    async deleteTarea({ commit }, idTarea) {
+      const colTareas = db.collection("tareas");
+      await colTareas
+        .doc(idTarea)
+        .delete()
+        .catch((e) => {
+          return console.log(e);
+        });
+      await commit("setEliminarTarea", idTarea);
+      return console.log("Tarea Eliminada");
     },
   },
 });
