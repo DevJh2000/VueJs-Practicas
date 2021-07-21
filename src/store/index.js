@@ -2,6 +2,8 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { db } from "../firebase";
 import router from "../router";
+import Swal from "sweetalert2";
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -40,12 +42,24 @@ export default new Vuex.Store({
     },
     //Agregar una nueva tarea
     async postTarea({}, nuevaTarea) {
-      const colTareas = db.collection("tareas");
-      await colTareas.add({ nombre_Tarea: nuevaTarea }).catch((e) => {
-        return console.log(e);
-      });
-      router.push("/");
-      return console.log("Tarea Registrada");
+      if (nuevaTarea.trim() !== "") {
+        try {
+          const colTareas = db.collection("tareas");
+          await colTareas.add({ nombre_Tarea: nuevaTarea }).catch((e) => {
+            return console.log(e);
+          });
+          router.push("/");
+          return console.log("Tarea Registrada");
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        return Swal.fire(
+          "Oops...",
+          "No ingreso el nombre de la tarea",
+          "error"
+        );
+      }
     },
     //almacenar estado de la informacion enviada entre formularios
     async DataToEdit({ commit }, dataToEdit) {
@@ -53,15 +67,27 @@ export default new Vuex.Store({
     },
     //Actualizar un tarea
     async putTarea({}, objTareaUpdate) {
-      const colTareas = db.collection("tareas");
-      await colTareas
-        .doc(objTareaUpdate.id)
-        .update({ nombre_Tarea: objTareaUpdate.tarea })
-        .catch((e) => {
-          return console.log(e);
-        });
-      router.push("/");
-      return console.log("Tarea Actualizada");
+      if (objTareaUpdate.tarea.trim() !== "") {
+        try {
+          const colTareas = db.collection("tareas");
+          await colTareas
+            .doc(objTareaUpdate.id)
+            .update({ nombre_Tarea: objTareaUpdate.tarea })
+            .catch((e) => {
+              return console.log(e);
+            });
+          router.push("/");
+          return console.log("Tarea Actualizada");
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        return Swal.fire(
+          "Oops...",
+          "No ingreso el nombre de la tarea",
+          "error"
+        );
+      }
     },
     //Eliminar una tarea
     async deleteTarea({ commit }, idTarea) {
@@ -72,7 +98,7 @@ export default new Vuex.Store({
         .catch((e) => {
           return console.log(e);
         });
-      await commit("setEliminarTarea", idTarea);
+      commit("setEliminarTarea", idTarea);
       return console.log("Tarea Eliminada");
     },
   },

@@ -11,7 +11,7 @@
     <md-list v-for="(item, index) in listTareas" :key="index">
       <md-list-item>
         <md-icon>task</md-icon>
-        <md-list-item-text>{{ item.nombre_Tarea }}</md-list-item-text>
+        <md-list-item>{{ item.nombre_Tarea }}</md-list-item>
         <router-link
           :to="{
             name: 'Editar',
