@@ -1,13 +1,5 @@
 <template>
   <div class="inicio">
-    <router-link
-      :to="{
-        name: 'Agregar',
-      }"
-    >
-      <md-button class="md-fab md-primary"> <md-icon>add</md-icon> </md-button>
-    </router-link>
-    <br />
     <md-list v-for="(item, index) in listTareas" :key="index">
       <md-list-item>
         <md-icon>task</md-icon>

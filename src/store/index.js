@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { db } from "../firebase";
+import { db, auth } from "../firebase";
 import router from "../router";
 import Swal from "sweetalert2";
 
@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: {
     listTareas: [],
     dataToEdit: {},
+    userDetec: null,
   },
   mutations: {
     setTareas(state, payloadTareas) {
@@ -26,8 +27,83 @@ export default new Vuex.Store({
         return dat.id !== payloadDatatoDelete;
       }));
     },
+    setUserDetec(state, payloadUserDetec) {
+      state.userDetec = payloadUserDetec;
+    },
   },
   actions: {
+    //Login
+    async postLogin({}, dataNewUser) {
+      if (dataNewUser.email.trim() !== "" || dataNewUser.pass.trim() !== "") {
+        try {
+          const loginUser = await auth
+            .signInWithEmailAndPassword(dataNewUser.email, dataNewUser.pass)
+            .catch((e) => {
+              console.log(e);
+              return Swal.fire("Oops...", `${e.message}`, "error");
+            });
+          if (loginUser.user) {
+            console.log(loginUser);
+
+            return Swal.fire("Bienvenido", `${dataNewUser.email}`, "success");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        return Swal.fire(
+          "Oops...",
+          "Debe llenar todos los cmapos para proceder",
+          "error"
+        );
+      }
+    },
+    //logout
+    async logOut({}) {
+      try {
+        await auth.signOut().catch((e) => {
+          console.log(e);
+          return Swal.fire("Oops...", `${e.message}`, "error");
+        });
+        return Swal.fire(
+          "Ha finalizodo su Sesion",
+          "Se ha vuelto al Login",
+          "info"
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    //registrar Usuario
+    async postNewUser({}, dataNewUser) {
+      if (dataNewUser.email.trim() !== "" || dataNewUser.pass.trim() !== "") {
+        try {
+          const newUser = await auth
+            .createUserWithEmailAndPassword(dataNewUser.email, dataNewUser.pass)
+            .catch((e) => {
+              console.log(e);
+              return Swal.fire("Oops...", `${e.message}`, "error");
+            });
+          if (newUser.user) {
+            console.log(newUser);
+            router.push("/");
+            return Swal.fire(
+              "Felicidades estas Registrado",
+              `Usta el E-mail: ${dataNewUser.email}, para loguearte la proxima vez`,
+              "success"
+            );
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        return Swal.fire(
+          "Oops...",
+          "Debe llenar todos los cmapos para proceder",
+          "error"
+        );
+      }
+    },
     //listar tareas
     async getDataTareas({ commit }) {
       const arrTareas = [];
@@ -100,6 +176,21 @@ export default new Vuex.Store({
         });
       commit("setEliminarTarea", idTarea);
       return console.log("Tarea Eliminada");
+    },
+    //Detectar usuario logueado
+    async detecUserLog({ commit }, user) {
+      commit("setUserDetec", user);
+    },
+  },
+  getters: {
+    existUser(state) {
+      if (state.userDetec === null) {
+        router.push("/login");
+        return false;
+      } else {
+        router.push("/");
+        return true;
+      }
     },
   },
 });
