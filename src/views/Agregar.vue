@@ -1,18 +1,28 @@
 <template>
   <div class="edit">
-    <h1>Agregar</h1>
-    <h2>
-      Agregar una nueva tarea a la base de datos
-    </h2>
-
-    <form novalidate class="md-layout" @submit.prevent="postTarea(newCurso)">
+    <form
+      novalidate
+      class="md-layout md-alignment-center"
+      @submit.prevent="postTarea(newCurso)"
+    >
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
-          <div class="md-title">Tarea</div>
+          <div class="md-title">Nueva Tarea</div>
         </md-card-header>
+        <md-card-content>
+          <div class="md-layout md-gutter">
+            <div class="md-layout-item md-small-size-100">
+              <md-field>
+                <label for="first-name">Nombre</label>
+                <md-input type="text" v-model="newCurso"></md-input>
+              </md-field>
+              <md-card-actions>
+                <md-button type="submit" class="md-primary">Agregar</md-button>
+              </md-card-actions>
+            </div>
+          </div>
+        </md-card-content>
       </md-card>
-      <input type="text" v-model="newCurso" />
-      <button type="submit">Agregar</button>
     </form>
   </div>
 </template>

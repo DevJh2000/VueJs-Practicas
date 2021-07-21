@@ -1,34 +1,35 @@
 <template>
   <div class="inicio">
-    <h1>CRUD con VUE y Firebase</h1>
-    <br />
     <router-link
       :to="{
         name: 'Agregar',
       }"
     >
-      <md-button class="md-fab md-primary">
-        <md-icon>+</md-icon>
-      </md-button>
+      <md-button class="md-fab md-primary"> <md-icon>add</md-icon> </md-button>
     </router-link>
-    <ul>
-      <li v-for="(item, index) in listTareas" :key="index">
-        {{ item.id }}///////////////{{ item.nombre_Tarea }}
+    <br />
+    <md-list v-for="(item, index) in listTareas" :key="index">
+      <md-list-item>
+        <md-icon>task</md-icon>
+        <md-list-item-text>{{ item.nombre_Tarea }}</md-list-item-text>
         <router-link
           :to="{
             name: 'Editar',
             params: { object: { id: item.id, tarea: item.nombre_Tarea } },
           }"
         >
-          <md-button to="/components/button" class="md-primary"
-            >Editar</md-button
-          >
+          <md-button class="md-icon-button">
+            <md-icon>edit</md-icon>
+          </md-button>
         </router-link>
-        &nbsp
-
-        <button @click="deleteTarea(item.id)">Eliminar</button>
-      </li>
-    </ul>
+        <md-button
+          @click="deleteTarea(item.id)"
+          class="md-icon-button md-accent"
+        >
+          <md-icon>delete</md-icon>
+        </md-button>
+      </md-list-item>
+    </md-list>
   </div>
 </template>
 <script>
