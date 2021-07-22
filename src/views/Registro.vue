@@ -11,21 +11,51 @@
       <md-card-content>
         <div class="md-layout md-gutter">
           <div class="md-layout-item md-small-size-100">
-            <md-field>
+            <md-field :class="{ 'md-invalid': $v.email.$error }">
               <label for="email">E-mail</label>
-              <md-input name="email" type="text" v-model="email"></md-input>
+              <md-input
+                name="email"
+                type="text"
+                v-model="$v.email.$model"
+              ></md-input>
+              <span class="md-error" v-if="$v.email.email === false"
+                >Debe ingresar un correo electronico valido</span
+              >
+              <span class="md-error" v-if="$v.email.$model === ''"
+                >El campo es requerido</span
+              >
             </md-field>
-            <md-field>
+            <md-field :class="{ 'md-invalid': $v.pass.$error }">
               <label for="pass">Contraseña</label>
-              <md-input name="pass" type="password" v-model="pass"></md-input>
+              <md-input
+                name="pass"
+                type="password"
+                v-model="$v.pass.$model"
+              ></md-input>
+              <span class="md-error" v-if="$v.pass.$model === ''"
+                >Debe ingresar una Contraseña valida</span
+              >
+              <span class="md-error" v-else-if="!$v.pass.minLength"
+                >La conaseña debe tener mas de 6 caracteres</span
+              >
             </md-field>
-            <md-field>
+            <md-field :class="{ 'md-invalid': $v.confirmPass.$error }">
               <label for="pass">Repita se contraseña</label>
               <md-input
                 name="confirmPass"
                 type="password"
-                v-model="confirmPass"
+                v-model="$v.confirmPass.$model"
               ></md-input>
+              <span class="md-error" v-if="$v.confirmPass.$model === ''"
+                >Debe ingresar la confirmacion de Contraseña valida</span
+              >
+              <span class="md-error" v-else-if="!$v.confirmPass.minLength"
+                >La confirmacion de conaseña debe tener mas de 6
+                caracteres</span
+              >
+              <span class="md-error" v-else-if="!$v.confirmPass.$sameAs"
+                >Las contraseñas deben ser iguales</span
+              >
             </md-field>
           </div>
         </div>
@@ -45,6 +75,13 @@
 </template>
 <script>
 import { mapActions } from "vuex";
+import {
+  required,
+  minLength,
+  between,
+  email,
+  sameAs,
+} from "vuelidate/lib/validators";
 export default {
   name: "Registro",
   data() {
@@ -53,6 +90,15 @@ export default {
       pass: "",
       confirmPass: "",
     };
+  },
+  validations: {
+    email: { required, email },
+    pass: { required, minLength: minLength(6) },
+    confirmPass: {
+      required,
+      minLength: minLength(6),
+      sameAs: sameAs("password"),
+    },
   },
   methods: {
     ...mapActions(["postNewUser"]),

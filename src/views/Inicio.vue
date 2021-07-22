@@ -1,5 +1,5 @@
 <template>
-  <div class="inicio">
+  <div class="inicio" v-if="userDetec !== null">
     <md-list v-for="(item, index) in listTareas" :key="index">
       <md-list-item>
         <md-icon>task</md-icon>
@@ -15,7 +15,7 @@
           </md-button>
         </router-link>
         <md-button
-          @click="deleteTarea(item.id)"
+          @click="deleteTarea({ id: item.id, email: userDetec.email })"
           class="md-icon-button md-accent"
         >
           <md-icon>delete</md-icon>
@@ -30,13 +30,13 @@ import { mapActions, mapState } from "vuex";
 export default {
   name: "Inicio",
   created() {
-    this.getDataTareas();
+    this.getDataTareas(this.userDetec);
   },
   methods: {
     ...mapActions(["getDataTareas", "deleteTarea"]),
   },
   computed: {
-    ...mapState(["listTareas"]),
+    ...mapState(["listTareas", "userDetec"]),
   },
 };
 </script>

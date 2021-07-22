@@ -3,7 +3,13 @@
     <form
       novalidate
       class="md-layout md-alignment-center"
-      @submit.prevent="putTarea(dataToEdit)"
+      @submit.prevent="
+        putTarea({
+          id: dataToEdit.id,
+          tarea: dataToEdit.tarea,
+          email: userDetec.email,
+        })
+      "
     >
       <md-card class="md-layout-item md-size-50 md-small-size-100">
         <md-card-header>
@@ -45,7 +51,7 @@ export default {
     ...mapActions(["DataToEdit", "putTarea"]),
   },
   computed: {
-    ...mapState(["dataToEdit"]),
+    ...mapState(["dataToEdit", "userDetec"]),
   },
 };
 </script>

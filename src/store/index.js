@@ -59,12 +59,13 @@ export default new Vuex.Store({
       }
     },
     //logout
-    async logOut({}) {
+    async logOut({ commit }) {
       try {
         await auth.signOut().catch((e) => {
           console.log(e);
           return Swal.fire("Oops...", `${e.message}`, "error");
         });
+        commit("setUserDetec", null);
         return Swal.fire(
           "Ha finalizodo su Sesion",
           "Se ha vuelto al Login",
@@ -86,7 +87,15 @@ export default new Vuex.Store({
             });
           if (newUser.user) {
             console.log(newUser);
-            router.push("/");
+
+            await db
+              .collection(newUser.user.email)
+              .add({
+                nombre_Tarea:
+                  "Tarea Para Editar o Eliminar, Se creo una coleccion unica para tus tareas",
+              })
+              .catch((e) => console.log(e));
+
             return Swal.fire(
               "Felicidades estas Registrado",
               `Usta el E-mail: ${dataNewUser.email}, para loguearte la proxima vez`,
@@ -105,9 +114,11 @@ export default new Vuex.Store({
       }
     },
     //listar tareas
-    async getDataTareas({ commit }) {
+    async getDataTareas({ commit }, userDetec) {
       const arrTareas = [];
-      const colTareas = db.collection("tareas").orderBy("nombre_Tarea", "asc");
+      const colTareas = db
+        .collection(userDetec.email)
+        .orderBy("nombre_Tarea", "asc");
       const lisdata = await colTareas.get().catch((e) => {
         return console.log(e);
       });
@@ -117,13 +128,15 @@ export default new Vuex.Store({
       commit("setTareas", arrTareas);
     },
     //Agregar una nueva tarea
-    async postTarea({}, nuevaTarea) {
-      if (nuevaTarea.trim() !== "") {
+    async postTarea({}, dataForNewTarea) {
+      if (dataForNewTarea.nombreTarea.trim() !== "") {
         try {
-          const colTareas = db.collection("tareas");
-          await colTareas.add({ nombre_Tarea: nuevaTarea }).catch((e) => {
-            return console.log(e);
-          });
+          const colTareas = db.collection(dataForNewTarea.email);
+          await colTareas
+            .add({ nombre_Tarea: dataForNewTarea.nombreTarea })
+            .catch((e) => {
+              return console.log(e);
+            });
           router.push("/");
           return console.log("Tarea Registrada");
         } catch (error) {
@@ -145,7 +158,7 @@ export default new Vuex.Store({
     async putTarea({}, objTareaUpdate) {
       if (objTareaUpdate.tarea.trim() !== "") {
         try {
-          const colTareas = db.collection("tareas");
+          const colTareas = db.collection(objTareaUpdate.email);
           await colTareas
             .doc(objTareaUpdate.id)
             .update({ nombre_Tarea: objTareaUpdate.tarea })
@@ -166,15 +179,15 @@ export default new Vuex.Store({
       }
     },
     //Eliminar una tarea
-    async deleteTarea({ commit }, idTarea) {
-      const colTareas = db.collection("tareas");
+    async deleteTarea({ commit }, dataForDelete) {
+      const colTareas = db.collection(dataForDelete.email);
       await colTareas
-        .doc(idTarea)
+        .doc(dataForDelete.id)
         .delete()
         .catch((e) => {
           return console.log(e);
         });
-      commit("setEliminarTarea", idTarea);
+      commit("setEliminarTarea", dataForDelete.id);
       return console.log("Tarea Eliminada");
     },
     //Detectar usuario logueado
