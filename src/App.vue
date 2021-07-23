@@ -1,6 +1,9 @@
 <template>
-  <div id="app">
-    <div class="md-layout md-gutter md-alignment-center">
+  <md-content id="app">
+    <div class="loadingCSS md-layout md-gutter md-alignment-center" v-if="load">
+      <grid-loader :loading="load"></grid-loader>
+    </div>
+    <div class="md-layout md-gutter md-alignment-center" v-else="!load">
       <div class="md-layout-item md-layout md-gutte md-alignment-center">
         <router-link to="/">
           <img alt="Vue logo" src="./assets/logo.png" />
@@ -31,18 +34,24 @@
         </md-list>
       </div>
     </div>
+
     <router-view />
-  </div>
+  </md-content>
 </template>
-<
+
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
+import GridLoader from "vue-spinner/src/GridLoader";
 export default {
   methods: {
     ...mapActions(["logOut"]),
   },
   computed: {
     ...mapGetters(["existUser"]),
+    ...mapState(["load"]),
+  },
+  components: {
+    GridLoader,
   },
 };
 </script>

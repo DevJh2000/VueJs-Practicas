@@ -15,7 +15,13 @@
           </md-button>
         </router-link>
         <md-button
-          @click="deleteTarea({ id: item.id, email: userDetec.email })"
+          @click="
+            deleteTarea({
+              id: item.id,
+              email: userDetec.email,
+              tarea: item.nombre_Tarea,
+            })
+          "
           class="md-icon-button md-accent"
         >
           <md-icon>delete</md-icon>

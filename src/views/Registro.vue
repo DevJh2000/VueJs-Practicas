@@ -16,7 +16,7 @@
               <md-input
                 name="email"
                 type="text"
-                v-model="$v.email.$model"
+                v-model.lazy="$v.email.$model"
               ></md-input>
               <span class="md-error" v-if="$v.email.email === false"
                 >Debe ingresar un correo electronico valido</span
@@ -30,7 +30,7 @@
               <md-input
                 name="pass"
                 type="password"
-                v-model="$v.pass.$model"
+                v-model.lazy="$v.pass.$model"
               ></md-input>
               <span class="md-error" v-if="$v.pass.$model === ''"
                 >Debe ingresar una Contraseña valida</span
@@ -44,7 +44,7 @@
               <md-input
                 name="confirmPass"
                 type="password"
-                v-model="$v.confirmPass.$model"
+                v-model.lazy.lazy="$v.confirmPass.$model"
               ></md-input>
               <span class="md-error" v-if="$v.confirmPass.$model === ''"
                 >Debe ingresar la confirmacion de Contraseña valida</span
@@ -74,7 +74,7 @@
   </form>
 </template>
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import {
   required,
   minLength,
@@ -97,19 +97,18 @@ export default {
     confirmPass: {
       required,
       minLength: minLength(6),
-      sameAs: sameAs("password"),
+      sameAs: sameAs("pass"),
     },
   },
   methods: {
     ...mapActions(["postNewUser"]),
   },
   computed: {
+    ...mapState(["load"]),
     desactivar() {
       return (
         (this.pass.trim() || this.confirmPass.trim() !== "") &&
-        this.pass.trim() ===
-          this.confirmPass.trim() /* &&
-        (this.pass.trim().length() || this.confirmPass.trim().length() > 6) */
+        this.pass.trim() === this.confirmPass.trim()
       );
     },
   },

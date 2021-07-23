@@ -14,7 +14,10 @@
             <div class="md-layout-item md-small-size-100">
               <md-field :class="{ 'md-invalid': $v.newCurso.$error }">
                 <label for="first-name">Nombre</label>
-                <md-input type="text" v-model="$v.newCurso.$model"></md-input>
+                <md-input
+                  type="text"
+                  v-model.lazy="$v.newCurso.$model"
+                ></md-input>
                 <span class="md-error">El campo es requerido</span>
               </md-field>
             </div>
@@ -64,7 +67,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(["userDetec"]),
+    ...mapState(["userDetec", "load"]),
   },
 };
 </script>

@@ -16,7 +16,7 @@
               <md-input
                 name="email"
                 type="text"
-                v-model="$v.email.$model"
+                v-model.lazy="$v.email.$model"
               ></md-input>
               <span class="md-error" v-if="$v.email.email === false"
                 >Debe ingresar un correo electronico valido</span
@@ -30,7 +30,7 @@
               <md-input
                 name="pass"
                 type="password"
-                v-model="$v.pass.$model"
+                v-model.lazy="$v.pass.$model"
               ></md-input>
               <span class="md-error" v-if="$v.pass.$model === ''"
                 >El campo es requerido</span
@@ -65,7 +65,7 @@
   </form>
 </template>
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import { required, minLength, between, email } from "vuelidate/lib/validators";
 export default {
   name: "Login",
@@ -83,6 +83,7 @@ export default {
     ...mapActions(["postLogin"]),
   },
   computed: {
+    ...mapState(["load"]),
     desactivar() {
       return (
         (this.email.trim() || this.pass.trim() === "") &&
